@@ -1,0 +1,105 @@
+---
+title: "R Usage Basics"
+author: "Hephaes Chuen Chau"
+date: '2022-02-25'
+output: html_document
+---
+
+## Starting R
+
+### Check path of R
+
+To check the path to the R being used by RStudio, apply:
+
+```{r eval = FALSE, echo = TRUE}
+file.path(R.home("bin"), "R")
+```
+
+### Use python in R
+
+To start using python in the console, install the packages as required by RStudio to use python successfully (reticulate, for example), and start
+
+```{r eval = FALSE, echo = TRUE}
+reticulate::repl_python()
+# The default environment to be used is "r-reticulate" environment. Do NOT delete this environment in anaconda to minimise errors. 
+```
+
+It can be seen following this command we are shown the path to the python being used, being
+
+"Python 3.8.12 (/Users/H/Library/r-miniconda-arm64/envs/r-reticulate/bin/python)". The documentation of reticulate is provided in "<https://rstudio.github.io/reticulate/articles/python_packages.html>"
+
+### Start a new python environemnt, and managing python environments
+
+```{r eval = FALSE, echo = TRUE}
+library(reticulate)
+
+# create a new environment 
+conda_create("example_environment")
+
+# install SciPy
+conda_install("example_environment", "scipy")
+
+# indicate that we want to use a specific condaenv; note that we cannot jump to another environment in the same R session. The session must be restarted. 
+use_condaenv("r-reticulate")
+```
+
+The created environments and the packages will be visible on Anaconda GUI, so that the versions of packages can be maintained.
+
+### Managing R environments
+
+We first download the package "renv" and apply it. We then create a project in Rstudio and toggle renv on for this project. Inside the new project, we can download and update packages in that project as we want. renv will help us fix the packages downloaded to that project only. To see the paths to the library (-ie, the folder that contains all the packages for the specific project), apply
+
+```{r eval = FALSE, echo = TRUE}
+.libPaths()
+```
+
+To see the packages that are in use, apply
+
+```{r eval = FALSE, echo = TRUE}
+sessionInfo()
+```
+
+To automatically library some packages every time a session is restarted in a project, apply inside the project
+
+```{r eval = FALSE, echo = TRUE}
+file.edit(".Rprofile")
+# IMPORTANT: and then enter the library commands to load the desired packages. 
+```
+
+### Using Rmarkdown
+
+Set parameter
+
+1.  eval to False if you do not want the snippet to be run
+2.  echo to False if you do not want the snippet to be shown
+3.  cache to True if you want the snippet to be run, with the results cached in the project's folder, so that when the code snippet is run next time the results are automatically shown without running the whole process again
+
+Consult the document <https://bookdown.org/yihui/rmarkdown-cookbook/> for more information about how Rmarkdown can be properly used.
+
+### Connecting with GitHub
+
+After creating an account in GitHub and after setting up a repo in GitHub (we should specify a .gitignore file in the set-up page), clone the repo with GitHub Desktop (or other methods) to a specific folder in the local machine. Then, open a R project with Rstduio on the local folder just created. To specify the files in the project folder that should be ignored by git: apply
+
+```{r eval = FALSE, echo = TRUE}
+file.edit(".gitignore")
+```
+
+A file named ".gitignore" will appear to be edited. Inside the folder, under the section "# User-specific files", input the name of the folder. Git will ignore all updates inside this folder. Try this edit too.
+
+### Changing GitHub credentials
+
+GitHub no longer allows local host to use username and password to push commits to remote host. Thus, we need to first
+
+1.  Set up a personal access token at <https://github.com/settings/tokens>
+2.  Copy the personal access token - call it "PAT"
+3.  Apply the following commands and enter "PAT" in the console
+4.  Set up SSH according to ./notes/SSH_setup_guide.html
+5.  Ensure that in RStudio Preferences -\> Git, the SSH private key folder has been correctly specified
+
+Remarks: The PAT change is global and is not project-specific. Handle PAT with specific care.
+
+```{r eval = FALSE, echo = TRUE}
+install.packages("gitcreds")
+library(gitcreds)
+gitcreds_set()
+```
