@@ -4,9 +4,10 @@ subtitle: "ASSIGNMENT 1"
 author: "Hephaes Chuen Chau (M116 I54105029)"
 date: '2022-02-25'
 output:
-  pdf_document: default
-  html_document: default
+   pdf_document:
+     latex_engine: xelatex
 ---
+
 # Question 0 (In-lesson exercise)
 
 We begin by transforming the structure of the data:
@@ -230,5 +231,37 @@ The disadvantages are:
 2. It is possible the exposure of the cases cannot be reliably ascertained because of recall bias, particularly when the exposure of interest include environmental variables. 
 
 3. When the exposure variable of interest potentially changes over time, since we do not re-examine the exposure of the control at a later time in case-cohort study, the estimate of the effects of the exposure could be biased. 
+
+# Question 3
+
+## Question 3(a)
+
+The most important concern is the possibility of over-matching resulting from smoking being a non-confounder. Whether over-matching in this case occurs depends on whether smoking causally increases the chance of exposure to air pollution. 
+
+1. Firstly, it is conceivable that smoking may very unlikely causes one's exposure to air pollution to increase or decrease, although it is conceivable that smoking increases (causally) the likelihood of developing the concerned respiratory cancer. Thus, this means smoking is unlikely to be a confounder. Since it is not a confounder, stratifying by smoking has no value in helping us uncover the possible relationship between air pollution and the outcome. This observation is less problematic when smoking is still statistically associated with air pollution (as a hypothetical case in point, when living in a polluted area predicts lower socioeconomic status which predicts a higher propensity to smoking), in which case the smoking is still a confounder. 
+
+2. Secondly, and more relevantly for this study, it is conceivable that the relationship between ethnic background and exposure to air pollution is so strong in the concerned population that after controlling for ethnic background, the variability of air pollution exposure becomes very low within strata. This means that the efficiency of the effect estimate is decreased (because the variance of the estimate will inevitably increase). 
+
+3. With respect to smoking again, it is conceivable that if smoking is a mediator in the causal pathway from air pollution to respiratory cancer （eg, residents in a highly polluted area may be more mindful of their health and therefore tend to quit smoking, while residents in less polluted area have a more perfunctory attitude), then matching for smoking introduces bias.  
+
+## Question 3(b)
+
+It is not reasonable. There could be at least two arguments supporting this answer:
+
+1. As advised by the textbook, little statistical power is gained beyond four or five controls per case
+
+2. There are indeed situations in which statistical power gained beyond four or five controls can be quite substantial, as explained by Hennessy et al (Hennessy et al, 1999):
+
+  a. When the correlation of the case and control exposures is high
+  
+  b. When the prevalence of exposure in the controls is low
+  
+  But in either case, if we refer to the plot of statistical power vs control-per-case curves by correlation or prevalence (Fig 1 and 2 in Hennessy's study) the curves rapidly flatten off beyond 7. The gain of statistical power beyond 7 is minimal. 
+  
+## Bibliography 
+
+Hennessy, S., W. B. Bilker, J. A. Berlin, and B. L. Strom. 1999. ‘Factors Influencing the Optimal Control-to-Case Ratio in Matched Case-Control Studies’. American Journal of Epidemiology 149 (2): 195–97. https://doi.org/10.1093/oxfordjournals.aje.a009786.
+
+Kim, Ryung S., and Robert C. Kaplan. 2014. ‘Analysis of Secondary Outcomes in Nested Case-Control Study Designs’. Statistics in Medicine 33 (24): 4215–26. https://doi.org/10.1002/sim.6231.
 
 

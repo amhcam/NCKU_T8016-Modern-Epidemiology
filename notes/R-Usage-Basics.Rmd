@@ -76,6 +76,10 @@ Set parameter
 
 Consult the document <https://bookdown.org/yihui/rmarkdown-cookbook/> for more information about how Rmarkdown can be properly used.
 
+#### Comment out a text
+
+Use "Shift+Cmd+C" hot key in macOS. 
+
 ### Connecting with GitHub
 
 After creating an account in GitHub and after setting up a repo in GitHub (we should specify a .gitignore file in the set-up page), clone the repo with GitHub Desktop (or other methods) to a specific folder in the local machine. Then, open a R project with Rstduio on the local folder just created. To specify the files in the project folder that should be ignored by git: apply

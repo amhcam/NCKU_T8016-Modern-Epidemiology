@@ -1,0 +1,128 @@
+---
+title: "Lecture 3"
+author: "Hephaes Chuen Chau"
+date: '2022-03-03'
+output: pdf_document
+---
+## References 
+
+1. Chapter 2 slides
+2. Chapter 2 of Epidemiology Beyond the Basics
+
+## Discussion on confounder
+
+A confounder $C$ must:
+
+1.  Be causally related to the outcome of interest
+2.  Be statistically associated with the putative risk factor
+
+### Matching
+
+-   Stratification must be kept at an appropriate level; otherwise too much stratification could cause a loss of variability (in terms of exposure) within stratum
+-   Regression is often used
+-   Alternatively (and ideally), increase the sample size and apply regression; matching is not preferred as there could be undesirable effects (overmatching)
+
+#### Matching in cohort study
+
+-   not preferred
+
+#### Matching in case-control study
+
+-   nested case-control study frequently encountered
+-   circumvent the problem caused by the survival bias involved in the selection of the control
+-   types of matching:
+    -   individual
+    -   frequency (cf <https://www.goldsteinepi.com/blog/matchinginacasecontrolstudyinpractice/index.html>)
+    -   statistical analysis in individual matching (each case matched with a number of control) :: usually conditional logistic regression is adopted
+    -   statistical analsisi in frequency matching :: usually unconditional logistic regression is adopted
+-   matching with a distance-ball:
+    -   for example Euclidean distance-based matching
+    -   however, the more frequently used type of matching when the number of variables to match is very high is propensity score
+
+### Propensity score
+
+-   A RCT example with $do(X)\in \{0,1\}$ representing treatmnet or not
+-   too much confounder controleld in logistic regression: power of $X$, the treatment of interest is reduced
+-   an alternative approach is adopted such that
+    -   A logistic regression of $X$ with respect to the confounder is produced
+    -   The model is used to predict a score of being assigned to a particular $X$, that is propensity score
+    -   Subjects with $do(X)=1$ are matched with subjects in $do(X)=0$ who have similar propensity score
+        -   Downstream analysis is then done with conditional logistic regression <!-- How about inverse probability weighting model?  -->
+
+### Advantages and disadvantages of matching
+
+-   Chapter 2 of Epidemiology, Beyond the Basics
+-   See p.58 and p.59. of Lecture 1 slides
+-   residual confounding: insufficient control for the confounders. This problem is especially serious when binning is applied to a confounder (eg, age) for matching.
+    -   In particular for the variable age, one should be alerted to the possibility of confounding for aging
+    -   Effect estimates of the variables with which the cases and the control are matched bear no significant meanings; however, the effect estimates of the variables not matched may be important
+
+## Measuring the occurence of a disease
+
+-   outcome variables can be categorised into discrete vs continuous variables
+
+### Discrete variables
+
+-   incidence, prevalence and odds are the three possible types of measurements
+-   incidence is a more complicated concept than prevalence
+
+#### Prevalence
+
+-   Prevalence measurements can be categorised according to the period of time in which cases are defined
+-   When time's unit appears in the denominator, the measurement is a rate. Thus, prevalence rate is more properly called prevalence proportions
+-   We therefore have
+
+$$ \text{Prevalence} = \frac{\text{Cases}}{\text{Those who are at risk of being cases + Cases}} $$ - Note that the time durign which the cases and non-cases is observed can be defined to be a point of time of a period of time
+
+#### Incidence
+
+-   the difficulty of arriving at the incidence is the difficulty with which the occurence of the event is accurately defined
+-   categorised by the units of the denominator: (a) persons at risk, or (b) person-time units at risk
+
+#### Hazard rate (p.39 slides)
+
+- $h(t)$ itself is not of interest to epidemiologists, while relative risk in the comparison of one group to another is more important
+
+## Incidence calculations and caveats
+
+### Incidence based on individuals at risk (life-table method)
+
+-   denominator of the proportion should be persons-at-risk, implying that they are individuals not having the disease
+-   survival rate is a misnomer, the proper term should be survival proportion
+    -   this is related to the fact that incidence proportion can be calculated by the method of life table and Kaplan-Meier method
+-   the first step of analysis: transform figure2-1 to figure 2-2 (as in the textbook)
+    -   this means all individuals should be portrayed to have the follow-up started at the same origin, with the x-axis being follow-up time
+-   If some individuals have been lost in follow-up: 
+
+$${ }_{m} q_{x}=\frac{{ }_{m}  d_{x}}{l_{x}-0.5{ }_{m} c_{x}}$$ 
+
+where ${ }_{m} c_{x}$ is a number (integer representing the number of individuals lost), and ${ }_{m} q_{x}$ is the cumulative probability of the event from time $x$, lasting for $m$ amount of time 
+
+- The cumulative probability of event for a period is the product of the cumulative probability of event in the subperiods divided from the period of interest (p.15 slides)
+- The above method is illustrated in p.16 of slides
+
+#### Key assumptions 
+
+- Missing rate and event rate are uniform across intervals in the period of interest
+- Missing data mechanism: not MNAR (censoring does not depend on the censored individual's survival); ideally not MAR too 
+  - Thus MCAR is the assumed censoring process mechanism
+
+
+### Incidence based on individuals at risk (Kaplan-Meier method)
+
+- p.19 of slides give an example of how Kaplan-Meier estimates of survival function and hazard function are derived
+
+### Incidence based person-time at risk (life-table method)
+
+- more appropriate for open/dynamic cohorts
+- the person-time units to select (person-year vs person-month eg) depend on the time scale of the development of the event 
+  - intermittent diarrhea: person-months 
+  - chronic diseases: person-years
+- incidence rate based on aggregate data (p.25 slides)
+
+- key assumptions:
+  1. The risk in the period of interest is not differential with the subperiods (eg, in a 1-year follow-up of 10 people, it is not the case that the risk of the event is heightened in autumn)
+  - It is not important that the individual's risk change in the subintervals; as long as the average behaviour of the sample is such that the sample-level risk is not different across subintervals, the assumption is satisfied
+  
+- relationship between incidence rate (based on grouped data) and density (p.30-32 slides)
+  

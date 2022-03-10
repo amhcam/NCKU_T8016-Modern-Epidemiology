@@ -429,6 +429,12 @@ cached in the project’s folder, so that when the code snippet is run
 next time the results are automatically shown without running the whole
 process again</li>
 </ol>
+<p>Consult the document <a href="https://bookdown.org/yihui/rmarkdown-cookbook/" class="uri">https://bookdown.org/yihui/rmarkdown-cookbook/</a> for more
+information about how Rmarkdown can be properly used.</p>
+<div id="comment-out-a-text" class="section level4">
+<h4>Comment out a text</h4>
+<p>Use “Shift+Cmd+C” hot key in macOS.</p>
+</div>
 </div>
 <div id="connecting-with-github" class="section level3">
 <h3>Connecting with GitHub</h3>
@@ -456,7 +462,8 @@ push commits to remote host. Thus, we need to first</p>
 <li>Ensure that in RStudio Preferences -&gt; Git, the SSH private key
 folder has been correctly specified</li>
 </ol>
-<p>Remarks: The PAT change is global and is not project-specific.</p>
+<p>Remarks: The PAT change is global and is not project-specific. Handle
+PAT with specific care.</p>
 <pre class="r"><code>install.packages(&quot;gitcreds&quot;)
 library(gitcreds)
 gitcreds_set()</code></pre>
