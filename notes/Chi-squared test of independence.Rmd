@@ -1,0 +1,57 @@
+---
+title: "Chi-squared test of independence"
+author: "Hephaes Chuen Chau"
+date: '2022-03-11'
+output: pdf_document
+---
+
+# Introduction
+
+In this set of notes, I will describe the purpose of chi-square test of independence, explain how its computation can be carried out (with a paper and a pencil, or with a computer equipped with R), and more importantly prove its validity from a mathematical and computational point of view.
+
+Before we begin, let's us forget everything about statistics and play with a dice. More accurately, we want to construct a hypothetical dice that only has two faces: "A+" and "A" (which are academic grades any undergraduate student usually desire). With R we can do this very simply by 
+
+```{r}
+dice <- function(){
+  face <- sample(c("A+","A"),1)
+  return(face)
+}
+```
+
+Let's us now play with the dice thrice, observe that the behaviour of dice is completely random:
+
+```{r}
+trial1 <- dice()
+trial2 <- dice()
+trial3 <- dice()
+trial1
+trial2
+trial3
+```
+
+Clearly, faced with such a random object, the only way we can describe the object's behaviour with human's language is not to predict what the next trial will give us, but to play with it a large number of times and report the long-term average behaviour of the object, assuming that each time we play with the dice we are playing with the same dice, and the history of our playing does not affect the dice's internal behaviour. 
+
+# Formalism 
+
+Let $X_{1}, X_{2}, \ldots$ be independent samples from a multinomial $(1, p)$ distribution, where $p$ is a $k$-vector with nonnegative entries that sum to one. That is,
+$$
+P\left(X_{i j}=1\right)=1-P\left(X_{i j}=0\right)=p_{j} \quad \text { for all } 1 \leq j \leq k
+$$
+and each $X_{i}$ consists of exactly $k-1$ zeros and a single one, where the one is in the component of the success category at trial $i$.
+
+This equation implies in particular that $\operatorname{Var}\left(X_{i j}\right)=p_{j}\left(1-p_{j}\right) .$ Furthermore, $\operatorname{Cov}\left(X_{i j}, X_{i l}\right)=$ $\mathrm{E}\left[X_{i j} X_{i l}\right]-p_{j} p_{l}=-p_{j} p_{l}$ for $j \neq l$. Therefore, the random vector $X_{i}$ has covariance matrix riven by
+$$
+\Sigma=\left(\begin{array}{llll}
+p_{1}\left(1-p_{1}\right) & -p_{1} p_{2} & \ldots & -p_{1} p_{k} \\
+-p_{1} p_{2} & p_{2}\left(1-p_{2}\right) & \ldots & -p_{2} p_{k} \\
+\vdots & \vdots & \ddots & \vdots \\
+-p_{1} p_{k} & -p_{2} p_{k} & \cdots & p_{k}\left(1-p_{k}\right)
+\end{array}\right)
+$$
+Let us prove shortly that the asymptotic distribution of the Pearson chi-square statistic given by
+$$
+\chi^{2}=\sum_{j=1}^{k} \frac{\left(N_{j}-n p_{j}\right)^{2}}{n p_{j}}
+$$
+where $N_{j}$ is the random variable $n \bar{X}_{j}$, the number of successes in the $j$ th category for trials $1, \ldots, n$ converges in distribution to the chi-square distribution with $k-1$ degrees of freedom.
+
+

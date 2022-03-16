@@ -107,3 +107,44 @@ install.packages("gitcreds")
 library(gitcreds)
 gitcreds_set()
 ```
+
+## Building a functions with memory in R
+As in python, in R it is possible to build a generator that suspends its operation and return an output that depends on previous operations.The following example is instructive:
+
+```{r}
+install.packages("coro")
+library(coro)
+example_generator <- generator(function(){
+  x <- 0
+  repeat {
+    yield(x+1)
+    x <- x + 1
+  }
+})
+example <- example_generator()
+example()
+example()
+example()
+example()
+```
+
+## Higher order function in R
+
+Higher-order function is used conveniently to calculate the incidence proportions in survival analysis; an example is given in assignment 2 of NCKU_T8016 Modern Epidemiology course. 
+```{r}
+example_higher <- function(x) {
+  function(y) {
+    z <- x
+    x <<- x + 1
+    return(z+y)
+  }
+}
+example <- example_higher(3)  # x = 3
+example(4) # after this step, x = 4
+example(5) # 5 + 4 = 9
+```
+
+
+
+
+

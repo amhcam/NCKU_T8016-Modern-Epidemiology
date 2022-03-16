@@ -1,0 +1,16 @@
+---
+title: "ADR Data Analysis"
+author: "Hephaes Chuen Chau"
+date: '2022-03-16'
+output: pdf_document
+---
+
+# Data import and pre-processing 
+
+We first import the dataset and inspect its structure via:
+```{r}
+library(readxl)
+dataset <- read_excel("Data_PD1.xlsx")
+str(dataset)
+```
+
