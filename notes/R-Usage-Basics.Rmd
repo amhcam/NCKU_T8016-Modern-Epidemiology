@@ -135,7 +135,7 @@ Higher-order function is used conveniently to calculate the incidence proportion
 example_higher <- function(x) {
   function(y) {
     z <- x
-    x <<- x + 1
+    x <<- x + 1 # we are modifying the global variable x; synonymous with the global                    keyword in python 
     return(z+y)
   }
 }
