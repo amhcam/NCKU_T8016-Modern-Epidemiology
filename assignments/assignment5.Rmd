@@ -1,0 +1,88 @@
+---
+title: "MODERN EPIDEMIOLOGY"
+author: "Hephaes Chuen Chau (M116 I54105029)"
+date: '2022-05-14'
+output:
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+  html_document:
+    toc: yes
+    df_print: paged
+subtitle: "ASSIGNMENT 5"
+---
+
+# Question 1
+
+## (a)
+
+In general, the following three conditions should be met:
+
+1. The putative confounder should be causally linked to the outcome of interest
+2. The putative confounder should at least be statistically associated with the outcome of interest
+3. The putative confounder should not be a mediator (that is, it should not be an intermediate variable in the causal pathway between the exposure and the outcome)
+
+## (b)
+
+We have three things that have to be done: firstly, we need to assess if there exists statistical relationship between the putative confounder and the exposure of interest; secondly, we need to stratify the exposure into groups defined by the putative confounder to assess if the statistical relationships between the outcome and the exposure of interest are retained. 
+
+For the first purpose we need to look at two tables of the following form:
+
+|                 | **Drinking = 0** | **Drinking = 1** |
+|-----------------|------------------|------------------|
+| **Smoking = 0** |         *        |         *        |
+| **Smoking = 1** |         *        |         *        |
+
+and 
+
+|                 | **Lung cancer = 0** | **Lung cancer = 1** |
+|-----------------|------------------|------------------|
+| **Smoking = 0** |         *        |         *        |
+| **Smoking = 1** |         *        |         *        |
+
+The variable `Smoking` is qualified to be a confounding variable when from both tables the OR calculated reflects that there is statistical association between `Smoking` and `Drinking` and `Lung cancer`. 
+
+For the second purpose we need three tables
+
+|                 | **Lung cancer = 0** | **Lung cancer = 1** |
+|-----------------|------------------|------------------|
+| **Drinking= 0 & Smoking = 0** |         *        |         *        |
+| **Drinking= 1 & Smoking = 0** |         *        |         *        |
+
+
+|                 | **Lung cancer = 0** | **Lung cancer = 1** |
+|-----------------|------------------|------------------|
+| **Drinking= 0 & Smoking = 1** |         *        |         *        |
+| **Drinking= 1 & Smoking = 1** |         *        |         *        |
+
+|                 | **Lung cancer = 0** | **Lung cancer = 1** |
+|-----------------|------------------|------------------|
+| **Drinking= 0 ** |         *        |         *        |
+| **Drinking= 1 ** |         *        |         *        |
+
+We may consider the confounding effects are present when the associations from the first two tables are similar but they differ substantially from the association calculated from the third table. 
+
+# Question 2
+
+## (a)
+
+The best explanation is serum triglyceride is a positive confounder, which partially confounds the relationship between serum dioxin and developing diabetes.
+
+## (b)
+
+There is an alternative mechanism by which serum dioxin level can increase the risk of developing diabetes. 
+
+# Question 3
+
+## (a)
+
+If we assume as has been told that longer sentences are associated with increased risk of suicide, then the patterns suggest that the imprisonment years in 1973-1982 are on average shorter than what would be prescribed later in 1983-1987. We can understand this by analogy with the example given in the textbook about the death rates in the United States compared to other economically less developed countries. It is known that after adjustment for age (which is positively associated with increased death likelihood), the age-adjusted death rate of the US becomes lower, from which we can conclude that the US has a higher elderly population. Thus, using the logic that can be gleaned from this example, it is expected the prison years to which inmates in 1973-1982 are sentenced should be shorter in duration. 
+
+## (b)
+
+The exposure of interest is policy changes, but it can be seen events that occured since 1983 could be potential confounders. Since 1983, in areas other than Auckland we know from (a) that the prison years prescribed have increased on average. In Auckland, we observed from data in 1973-1982 that sentence adjusted suicide rates is less than the crude rate, suggesting that imprisonment years were high, and they kept being high in from 1983 onwards (as evident by decreased adjusted suicide rate). 
+
+Thus from only the data, we have observed a discrepancy between Auckland and other areas in New Zealand: that there has been a change in imprisonment years prescribed in other areas while in Auckland, a similar pattern of change of effects of adjustment is not observed. From this we are led to conjecture that there are some differences between Auckland and other areas beyond the concerned policy change and which relate to the problem of suicide in the prisons.
+
+In addition to these considerations, it may be important to also understand the rationales of the legislative bodies in Auckland for making such a change and why such changes were not implemented in other areas, as this information may help us determine what other events that occured since 1983 may have produced the data instead of the policy change. 
+
