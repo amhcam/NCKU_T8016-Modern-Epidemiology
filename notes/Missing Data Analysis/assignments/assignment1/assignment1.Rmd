@@ -1,0 +1,257 @@
+---
+title: "MISSING DATA ANALYSIS"
+author: "Hephaes Chuen Chau (I54105029)"
+date: '2022-04-06'
+output:
+  html_document:
+    toc: yes
+    df_print: paged
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+subtitle: "ASSIGNMENT 1"
+---
+
+# Question 1
+
+## (a)
+We assume that all for all variables, the missing occurs in the same cases. Therefore, the largest possible subsample is $100-100\times 10\% = 90$
+
+## (b)
+We assume that the missing data follow a monotone pattern, meaning that for each variable $10\%$ of the data is deleted. This means the smallest possible subsample is $0$. 
+
+## (c)
+Let $X_i$ with support $\{0,1\}$ denote the random variable indicating whether case $i$ has at least one missing value in one of the 10 variables (if missing then $X_i=1$). We know therefore by assuming MCAR that
+$$ \mathbb{P}(X_i = 0) = (0.9)^{10}$$
+A case $i$ is retained in listwise deletion method if and only if $X_i=0$. Thus, the expected number of retained cases is $100\times (0.9)^{10} = 34.8$. This means on average 34 cases are retained. 
+
+## (d)
+
+The available sample is larger. 
+In listwise deletion technique, a case is removed as long as there is at least one variable that has missing value. Thus, while the available sample is 100, in (a) we assume all the missing values in different variables occur in a fixed set of cases, then even with this stringent assumption we still have to remove 10 cases from the data. 
+
+# Question 2
+
+## (a) Missing rate in each variable
+We first remove the unneeded variables and produce a plot 
+```{r}
+DATA <- read.csv("Diabetes.csv")
+for (i in c("location", "gender", "frame")) {
+  DATA[,i] <- as.factor(DATA[,i])
+}
+# Removing unnecessary variables 
+data <- DATA[,-which(colnames(DATA) %in% c("id", "chol", "stab.glu", "hdl", "ratio", "glyhb", "bp.2d", "bp.1d"))]
+missing_rate <- c()
+for (i in seq_len(11)) {
+  j <- colnames(data)[i]
+  Nmissing <- sum(is.na(data[,j]))
+  N <- length(data[,j])
+  missing_rate[i] <- Nmissing/N
+}
+names(missing_rate) <- colnames(data)
+missing_rate <- as.data.frame(missing_rate)
+```
+
+```{r}
+library(ggplot2)
+missing_rate$variables <- rownames(missing_rate)
+p <-ggplot(data=missing_rate, aes(x=variables, y=missing_rate)) +
+  geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=-90, hjust = 1))
+p
+
+```
+We therefore see that `bp.2s` have particularly high missing rates (exceeding 60%). Next we compare the missing rates of remaining variables, by:
+
+```{r}
+new_missing_rate <- missing_rate[-which(rownames(missing_rate) %in% c("bp.2s","bp.2d")), ]
+p2 <-ggplot(data=new_missing_rate, aes(x=variables, y=missing_rate)) +
+  geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=-90, hjust = 1))
+p2
+```
+
+Therefore, of the remaining variables, `frame` has particularly high missing rates (with the latter being close to 3%). 
+
+## (d) Missing patterns 
+
+```{r}
+library(mice)
+md.pattern(data, rotate.names = TRUE)
+```
+Therefore, from the above plot, we can identify a monotone pattern of missing data, because (i) there are some variables with no missing data, and (ii) there are more than one variables with missing data, and (iii) starting from the variable `chol`, all following variables have missing values in some cases. 
+
+The pattern is also unconnected because there are some observed data points that cannot be reached from other data points through vertical or horizontal moves. 
+
+# Question 3
+
+We select `bp.1s` as the response variable. 
+
+Before we apply any imputation method, we fit a linear model to the data with the incomplete cases deleted. The purpose of this step is to allow for a comparison of different imputation methods relative to complete case analysis. To conduct the complete case analysis, we fit a linear model on the data, ignoring any case with `NA` in any of the variables, and we conduct a stepwise regression model selection based on AIC. 
+
+```{r}
+library(MASS)
+ccfit <- lm(data = na.omit(data[,!(colnames(data) %in% "bp.2s")]), bp.1s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+ccstep <- stepAIC(ccfit, direction = "both")
+ccstep$anova
+summary(ccstep)
+```
+
+Therefore, our complete case analysis has settled for `bp.1s ~ age + waist + time.ppn` as the final model to be selected based on AIC. The adjusted R-squared is very low (0.194).  
+
+## (a) Mean Imputation 
+
+### (i) The imputation
+We do mean imputation with the package `mice`, with predictive mean matching for categorical and mean imputation for numerical variables. 
+
+```{r}
+library(mice)
+mean_imputated_data <- mice(data, defaultMethod = c("mean", "pmm", "pmm", "pmm"), m = 1, maxit = 20, printFlag = FALSE)
+md.pattern(complete(mean_imputated_data), rotate.names = TRUE)
+```
+
+### (ii) Stepwise multiple regression
+After the imputation, we hope to conduct a multiple regression analysis of the data. We proceed by stepwise regression to select the best model based on AIC, as follows:
+
+```{r}
+fit <- lm(data = complete(mean_imputated_data), bp.1s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+library(MASS)
+step <- stepAIC(fit, direction = "both")
+step$anova
+summary(step)
+```
+
+Therefore, with mean imputation, the stepwise model selection based on AIC applied on a family of simple multiple regression models has settled for a model with `age`, `waist` and `time.ppn` as the important explanatory variables. The summary of the final model reveals that only `age` and `waist` have effects significantly different from 0, and the effects of `time.ppn` is very weak. The adjusted R-squared is very low. 
+
+```{r}
+xyplot(mean_imputated_data, bp.1s ~ waist)
+
+```
+
+## (b) Regression imputation and stepwise multiple regression
+
+We use linear regression for numerical variables and polytomous logistic regression for categorical variables. 
+
+```{r}
+library(mice)
+regr_imputated_data <- mice(data, defaultMethod = c("norm.predict", "polyreg", "polyreg", "polyreg"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(regr_imputated_data), bp.1s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+library(MASS)
+step <- stepAIC(fit, direction = "both")
+step$anova
+summary(step)
+```
+
+With regression imputation, `hip` is introduced as an important explanatory variable. Therefore we are interested in analysing the relationship between `bp.1s` and `hip`:
+
+```{r}
+xyplot(regr_imputated_data, bp.1s ~ hip)
+```
+
+
+## (c) Stochastic regression imputation and stepwise multiple regression
+
+We use stochastic linear regression for numerical variables and polytomous logistic regression for categorical variables. 
+
+```{r}
+library(mice)
+stregr_imputated_data <- mice(data, defaultMethod = c("norm.nob", "polyreg", "polyreg", "polyreg"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(stregr_imputated_data), bp.1s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+library(MASS)
+step <- stepAIC(fit, direction = "both")
+step$anova
+summary(step)
+```
+With stochastic regression imputation, `hip` is again introduced as an important explanatory variable. Therefore we are interested in analysing the relationship between `bp.1s` and `hip`:
+
+```{r}
+xyplot(stregr_imputated_data, bp.1s ~ hip)
+```
+
+## (d) Random number imputation and stepwise multiple regression
+
+```{r}
+library(mice)
+rand_imputated_data <- mice(data, defaultMethod = c("sample", "sample", "sample", "sample"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(rand_imputated_data), bp.1s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+library(MASS)
+step <- stepAIC(fit, direction = "both")
+step$anova
+summary(step)
+```
+The final model selected is the same as in the complete case analysis. 
+
+# Question 4
+
+We select `bp.2s` as the response variable. 
+
+As in question 3, we fit a linear model to the data with the incomplete cases deleted. The purpose of this step is to allow for a comparison of different imputation methods relative to complete case analysis. To conduct the complete case analysis, we fit a linear model on the data, ignoring any case with `NA` in any of the variables, and we conduct a stepwise regression model selection based on AIC. 
+
+```{r}
+library(MASS)
+ccfit <- lm(data = na.omit(data[,!(colnames(data) %in% "bp.1s")]), bp.2s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+ccstep <- stepAIC(ccfit, direction = "both", trace = 0)
+ccstep$anova
+summary(ccstep)
+```
+Therefore, in complete case analysis, the model selected is `bp.2s ~ age + weight + waist + time.ppn`
+
+## (a) Mean imputation and model selection 
+```{r}
+library(mice)
+library(MASS)
+mean_imputated_data <- mice(data, defaultMethod = c("mean", "pmm", "pmm", "pmm"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(mean_imputated_data), bp.2s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+step <- stepAIC(fit, direction = "both", trace = 0)
+step$anova
+summary(step)
+```
+The final selected is the same as that in complete case analysis. 
+
+## (b) Regression imputation and model selection 
+
+```{r}
+library(mice)
+library(MASS)
+regr_imputated_data <- mice(data, defaultMethod = c("norm.predict", "polyreg", "polyreg", "polyreg"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(regr_imputated_data), bp.2s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+step <- stepAIC(fit, direction = "both", trace = 0)
+step$anova
+summary(step)
+```
+With regression imputation, `location` is added as an important explanatory variable in the final model. 
+
+## (c) Stochastic regression imputation and model selection 
+
+```{r}
+library(mice)
+library(MASS)
+stregr_imputated_data <- mice(data, defaultMethod = c("norm.nob", "polyreg", "polyreg", "polyreg"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(stregr_imputated_data), bp.2s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+step <- stepAIC(fit, direction = "both", trace = 0)
+step$anova
+summary(step)
+```
+With stochastic regression imputation, `frame` and `location` are both added as important explanatory variable in the final model. 
+
+## (d) Random number imputation and model selection 
+
+```{r}
+library(mice)
+library(MASS)
+rand_imputated_data <- mice(data, defaultMethod = c("sample", "sample", "sample", "sample"), m = 1, maxit = 20, printFlag = FALSE)
+fit <- lm(data = complete(rand_imputated_data), bp.2s ~ location + age + gender + height + weight + frame + waist + hip + time.ppn)
+step <- stepAIC(fit, direction = "both", trace = 0)
+step$anova
+summary(step)
+```
+With random number imputation, `gender` and `height` become included but `waist` and `time.ppn`, which were included with previous imputation methods have been removed. 
+
+# Conclusion 
+
+In this assignment we use different simple imputation methods on a data set that is the first systolic and diastolic blood pressure of 403 subjects with characteristics such as `height`, `age` and `waist` and `hip` circumference measured. The most important concern in this statistical analysis is whether the independent variables measured have any statistically significant effects on the outcomes. 
+
+In this regards, we can first safely conclude that `age` has a significant effect on both first systolic and diastolic blood pressure, as evidenced by the inclusion of `age` in the final model selected based on AIC, in the complete case analysis and regardless of the imputation methods we have employed.
+
+Moreover, we can also conclude that `waist` has a significant effect on first systolic and diastolic blood pressure. `waist` is eliminated in the model only for first systolic pressure with regression and stochastic regression imputation. However, for first systolic pressure, we should lend credence to complete case analysis because only 24 observations are removed (5% of the total data), and therefore subsequent inclusion of `hip` and exclusion of `waist` after the regression imputation should not be seen as strong evidence that `waist` has no effects.
+
+Another observation is that the imputation methods produce unstable results (in terms of the final model being selected) when the response variable has many missing values. This is illustrated by question 4, in which `bp.2s` has more than 60% of missing values. Depending on the imputation methods used, the final explanatory variables incldued in the model vary.
+

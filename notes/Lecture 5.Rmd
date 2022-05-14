@@ -1,0 +1,16 @@
+---
+title: "Lecture 5"
+author: "Hephaes Chuen Chau"
+date: '2022-03-17'
+output: pdf_document
+---
+
+# Information bias
+
+- Exposure identification bias 
+  - recall bias, bias due to inaccurate recall of past exposure 
+  - solution includes verification of responses, objective markers, well-defined cohort data
+    - example given by the exposure recall made by parents of children with rare diseases 
+  - interviewer bias
+    - due to interaction between observer and respondents; respondents are prompted to give the responses desired by the interviewer 
+  - differential vs non-differential (key is whether the misclassification extent differs between exposed vs non-exposed group)
